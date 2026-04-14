@@ -1,0 +1,53 @@
+// main.js
+
+// On crée l'interface
+window.createUI();
+
+// Fonction qui récupère les données de ton collègue
+async function updateUI() {
+
+  try {
+    console.log("Fetch en cours...");
+
+    const res = await fetch("http://46.101.76.48:3000/data");
+    const data = await res.json();
+
+    console.log("DATA API :", data);
+
+    /* ===== HUMIDITÉ ===== */
+    if (data.humidite !== undefined) {
+      const h = Number(data.humidite);
+
+      document.getElementById("gaugeHum").style.setProperty("--v", h);
+      document.getElementById("valHum").textContent = h + "%";
+      document.getElementById("stateHum").textContent = "Reçu";
+    }
+
+    /* ===== TEMPÉRATURE ===== */
+    if (data.temperature !== undefined) {
+      const t = Number(data.temperature);
+
+      const percent = (t / 50) * 100;
+
+      document.getElementById("gaugeTemp").style.setProperty("--v", percent);
+      document.getElementById("valTemp").textContent = t + "°C";
+      document.getElementById("stateTemp").textContent = "Reçu";
+    }
+
+    /* ===== BATTERIE ===== */
+    if (data.batterie !== undefined) {
+      const b = Number(data.batterie);
+
+      document.getElementById("gaugeBatt").style.setProperty("--v", b);
+      document.getElementById("valBatt").textContent = b + "%";
+      document.getElementById("stateBatt").textContent = "Reçu";
+    }
+
+  } catch (err) {
+    console.error("ERREUR :", err);
+  }
+}
+
+// Mise à jour toutes les 2 secondes
+updateUI();
+setInterval(updateUI, 2000);
