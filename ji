@@ -1,0 +1,56 @@
+console.log("main.js chargé");
+window.createUI();
+
+async function updateUI() {
+  try {
+    console.log("updateUI lancé");
+
+    const res = await fetch("http://46.101.76.48:3000/data");
+    console.log("réponse fetch :", res);
+
+    const data = await res.json();
+    console.log("données reçues :", data);
+
+    if (data.humidite !== null && data.humidite !== undefined) {
+      const h = Math.max(0, Math.min(100, Number(data.humidite)));
+      document.getElementById("gaugeHum").style.setProperty("--v", h);
+      document.getElementById("valHum").textContent = h + "%";
+      document.getElementById("stateHum").textContent = "Reçu";
+    }
+
+    if (data.temperature !== null && data.temperature !== undefined) {
+      const t = Number(data.temperature);
+      const percent = Math.max(0, Math.min(100, (t / 50) * 100));
+      document.getElementById("gaugeTemp").style.setProperty("--v", percent);
+      document.getElementById("valTemp").textContent = t + "°C";
+      document.getElementById("stateTemp").textContent = "Reçu";
+    }
+
+    if (data.batterie !== null && data.batterie !== undefined) {
+      const b = Math.max(0, Math.min(100, Number(data.batterie)));
+      document.getElementById("gaugeBatt").style.setProperty("--v", b);
+      document.getElementById("valBatt").textContent = b + "%";
+      document.getElementById("stateBatt").textContent = "Reçu";
+    }
+
+    if (data.flow !== null && data.flow !== undefined) {
+      const f = Math.max(0, Math.min(100, Number(data.flow)));
+      document.getElementById("gaugeFlow").style.setProperty("--v", f);
+      document.getElementById("valFlow").textContent = f + " L/h";
+      document.getElementById("stateFlow").textContent = "Reçu";
+    }
+
+    if (data.pourcentage !== null && data.pourcentage !== undefined) {
+      const p = Math.max(0, Math.min(100, Number(data.pourcentage)));
+      document.getElementById("gaugePourc").style.setProperty("--v", p);
+      document.getElementById("valPourc").textContent = p + "%";
+      document.getElementById("statePourc").textContent = "Reçu";
+    }
+
+  } catch (err) {
+    console.error("Erreur récupération données :", err);
+  }
+}
+
+updateUI();
+setInterval(updateUI, 2000);
